@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import enum
+import typing
 
 class Symbol(enum.Enum):
     """Cell values."""
@@ -20,26 +21,26 @@ class Symbol(enum.Enum):
         return " " if self == self.EMPTY else str(self.value)
 
     @classmethod
-    def cvt(cls, value: str) -> Symbol:
-        if value == " ":
+    def cvt(cls, value: typing.Union[int, str]) -> Symbol:
+        if value == " " or value == 0:
             return cls.EMPTY
-        if value == "1":
+        if value == "1" or value == 1:
             return cls.S1
-        if value == "2":
+        if value == "2" or value == 2:
             return cls.S2
-        if value == "3":
+        if value == "3" or value == 3:
             return cls.S3
-        if value == "4":
+        if value == "4" or value == 4:
             return cls.S4
-        if value == "5":
+        if value == "5" or value == 5:
             return cls.S5
-        if value == "6":
+        if value == "6" or value == 6:
             return cls.S6
-        if value == "7":
+        if value == "7" or value == 7:
             return cls.S7
-        if value == "8":
+        if value == "8" or value == 8:
             return cls.S8
-        if value == "9":
+        if value == "9" or value == 9:
             return cls.S9
         raise ValueError(f"Invalid symbol: {value}")
 
