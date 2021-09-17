@@ -22,27 +22,15 @@ class Symbol(enum.Enum):
 
     @classmethod
     def cvt(cls, value: typing.Union[int, str]) -> Symbol:
-        if value == " " or value == 0:
-            return cls.EMPTY
-        if value == "1" or value == 1:
-            return cls.S1
-        if value == "2" or value == 2:
-            return cls.S2
-        if value == "3" or value == 3:
-            return cls.S3
-        if value == "4" or value == 4:
-            return cls.S4
-        if value == "5" or value == 5:
-            return cls.S5
-        if value == "6" or value == 6:
-            return cls.S6
-        if value == "7" or value == 7:
-            return cls.S7
-        if value == "8" or value == 8:
-            return cls.S8
-        if value == "9" or value == 9:
-            return cls.S9
-        raise ValueError(f"Invalid symbol: {value}")
+        if isinstance(value, str):
+            try:
+                value = int(value)
+            except ValueError:
+                return cls.EMPTY
+        for s in cls:
+            if value == s.value:
+                return s
+        return cls.EMPTY
 
 class Board:
     """Representation of the board."""
@@ -51,8 +39,8 @@ class Board:
     def __init__(self):
         self._cell = [Symbol.EMPTY] * 81
 
-    @classmethod
-    def _i(cls, row: int, col: int) -> int:
+    @staticmethod
+    def _i(row: int, col: int) -> int:
         if 0 <= row < 9 and 0 <= col < 9:
             return (9 * row) + col
         raise IndexError(f"invalid cell: ({row}, {col})")
@@ -104,3 +92,11 @@ class Board:
             if row % 3 == 2:
                 lines.append(BAR)
         return "\n".join(lines)
+
+    def ingest(self, ary: typing.Sequence[int]):
+        """Imports an array of values."""
+        if len(ary) != 81:
+            raise ValueError("wrong array length")
+        for r in range(9):
+            for c in range(9):
+                self.put(r, c, Symbol.cvt(ary[self._i(r, c)]))
