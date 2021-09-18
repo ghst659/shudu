@@ -17,6 +17,9 @@ class Symbol(enum.Enum):
     S8 = enum.auto()
     S9 = enum.auto()
 
+    def __bool__(self) -> bool:
+        return bool(self.value)
+
     def pp(self) -> str:
         return " " if self == self.EMPTY else str(self.value)
 
@@ -49,21 +52,21 @@ class Board:
         """Returns the value at ROW, COLUMN."""
         return self._cell[self._i(row, col)]
 
-    def row(self, r: int) -> list[Symbol]:
+    def row(self, r: int) -> typing.Sequence[Symbol]:
         """Returns the list of symbols in ROW."""
-        return list(self.get(r, c) for c in range(9))
+        return tuple(self.get(r, c) for c in range(9))
 
-    def col(self, c: int) -> list[Symbol]:
+    def col(self, c: int) -> typing.Sequence[Symbol]:
         """Gets the elements in the given COLUMN."""
-        return list(self.get(r, c) for r in range(9))
+        return tuple(self.get(r, c) for r in range(9))
 
-    def box(self, br: int, bc: int) -> list[Symbol]:
+    def box(self, br: int, bc: int) -> typing.Sequence[Symbol]:
         """Gets the elements in the given box."""
         if not (0 <= br < 3 and 0 <= bc < 3):
             raise IndexError(f"invalid box: ({br}, {bc})")
-        return list(self.get(r, c)
-                    for r in range(br * 3, (br + 1) * 3)
-                    for c in range(bc * 3, (bc + 1) * 3))
+        return tuple(self.get(r, c)
+                     for r in range(br * 3, (br + 1) * 3)
+                     for c in range(bc * 3, (bc + 1) * 3))
 
     def __getitem__(self, key: tuple[int, int]) -> Symbol:
         row, col = key
