@@ -6,6 +6,13 @@ import unittest
 import shudu
 
 class TestShudu(unittest.TestCase):
+
+    def core(self, data: list[int], want: str):
+        board = shudu.Board()
+        board.ingest(data)
+        got = shudu.solve(board)
+        self.assertEqual(str(got), want)
+    
     def test_easy(self):
         data = [
 	    0, 0, 6, 0, 1, 0, 0, 0, 0,
@@ -18,9 +25,6 @@ class TestShudu(unittest.TestCase):
 	    0, 5, 8, 0, 0, 0, 4, 7, 0,
 	    0, 0, 0, 0, 4, 0, 5, 0, 0
         ]
-        board = shudu.Board()
-        board.ingest(data)
-        got = shudu.solve(board)
         want = textwrap.dedent("""\
         -------------
         |286|419|357|
@@ -35,7 +39,7 @@ class TestShudu(unittest.TestCase):
         |658|932|471|
         |712|846|593|
         -------------""")
-        self.assertEqual(str(got), want)
+        self.core(data, want)
 
     def test_medium(self):
         data = [
@@ -49,9 +53,6 @@ class TestShudu(unittest.TestCase):
 	    0, 0, 2, 1, 0, 0, 0, 0, 0,
 	    0, 0, 0, 2, 0, 0, 0, 1, 0
         ]
-        board = shudu.Board()
-        board.ingest(data)
-        got = shudu.solve(board)
         want = textwrap.dedent("""\
         -------------
         |693|514|782|
@@ -66,7 +67,35 @@ class TestShudu(unittest.TestCase):
         |432|156|978|
         |589|237|416|
         -------------""")
-        self.assertEqual(str(got), want)
+        self.core(data, want)
+
+    def test_hard(self):
+        data = [
+	    0, 0, 7, 3, 0, 0, 0, 0, 1,
+	    0, 9, 0, 0, 0, 0, 0, 7, 2,
+	    0, 0, 0, 0, 7, 2, 3, 0, 0,
+	    0, 1, 2, 0, 5, 0, 0, 0, 0,
+	    0, 6, 0, 7, 1, 0, 5, 0, 3,
+	    0, 8, 5, 0, 3, 0, 0, 0, 0,
+	    0, 0, 0, 0, 4, 1, 7, 0, 0,
+	    0, 3, 0, 0, 0, 0, 0, 9, 4,
+	    0, 0, 6, 5, 0, 0, 0, 0, 8
+        ]
+        want = textwrap.dedent("""\
+        -------------
+        |257|364|981|
+        |693|185|472|
+        |148|972|356|
+        -------------
+        |312|459|867|
+        |964|718|523|
+        |785|236|149|
+        -------------
+        |829|641|735|
+        |531|827|694|
+        |476|593|218|
+        -------------""")
+        self.core(data, want)
 
 if __name__ == "__main__":
     unittest.main()
