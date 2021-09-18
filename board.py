@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import enum
+import json
 import typing
 
 class Symbol(enum.Enum):
@@ -21,7 +22,7 @@ class Symbol(enum.Enum):
         return bool(self.value)
 
     def pp(self) -> str:
-        return " " if self == self.EMPTY else str(self.value)
+        return str(self.value) if self else " "
 
     @classmethod
     def cvt(cls, value: typing.Union[int, str]) -> Symbol:
@@ -34,6 +35,13 @@ class Symbol(enum.Enum):
             if value == s.value:
                 return s
         return cls.EMPTY
+
+    @classmethod
+    def unused(cls, symbols: typing.Iterable[Symbol]) -> typing.Iterable[Symbol]:
+        """Returns a list of enums not in the given symbol set."""
+        used_symbols = frozenset(symbols)
+        return tuple(s for s in cls if s and s not in used_symbols)
+
 
 class Board:
     """Representation of the board."""
@@ -103,3 +111,9 @@ class Board:
         for r in range(9):
             for c in range(9):
                 self.put(r, c, Symbol.cvt(ary[self._i(r, c)]))
+
+    def from_json(self, path: str):
+        """Ingests the data at the JSONFILE."""
+        with open(path, "r") as json_file:
+            data = json.load(json_file)
+        self.ingest(data["Board"])
