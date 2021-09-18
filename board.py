@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import copy
 import enum
 import json
 import typing
@@ -49,6 +50,9 @@ class Board:
 
     def __init__(self):
         self._cell = [Symbol.EMPTY] * 81
+
+    def clone(self):
+        return copy.copy(self)
 
     @staticmethod
     def _i(row: int, col: int) -> int:
