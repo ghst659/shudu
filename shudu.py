@@ -5,8 +5,7 @@ import copy
 import enum
 import json
 import logging
-
-from typing import Iterable, Sequence, Union
+import typing
 
 class Symbol(enum.Enum):
     """Cell values."""
@@ -28,7 +27,7 @@ class Symbol(enum.Enum):
         return str(self.value) if self else " "
 
     @classmethod
-    def cvt(cls, value: Union[int, str]) -> Symbol:
+    def cvt(cls, value: typing.Union[int, str]) -> Symbol:
         if isinstance(value, str):
             try:
                 value = int(value)
@@ -40,7 +39,7 @@ class Symbol(enum.Enum):
         return cls.EMPTY
 
     @classmethod
-    def unused(cls, symbols: Iterable[Symbol]) -> Iterable[Symbol]:
+    def unused(cls, symbols: typing.Iterable[Symbol]) -> typing.Iterable[Symbol]:
         """Returns a list of enums not in the given symbol set."""
         used_symbols = frozenset(symbols)
         return tuple(s for s in cls if s and s not in used_symbols)
@@ -66,15 +65,15 @@ class Board:
         """Returns the value at ROW, COLUMN."""
         return self._cell[self._i(row, col)]
 
-    def row(self, r: int) -> Sequence[Symbol]:
+    def row(self, r: int) -> typing.Sequence[Symbol]:
         """Returns the list of symbols in ROW."""
         return tuple(self.get(r, c) for c in range(9))
 
-    def col(self, c: int) -> Sequence[Symbol]:
+    def col(self, c: int) -> typing.Sequence[Symbol]:
         """Gets the elements in the given COLUMN."""
         return tuple(self.get(r, c) for r in range(9))
 
-    def box(self, row: int, col: int) -> Sequence[Symbol]:
+    def box(self, row: int, col: int) -> typing.Sequence[Symbol]:
         """Gets the elements in the box containing (ROW, COL)."""
         if not (0 <= row < 9 and 0 <= col < 9):
             raise IndexError(f"invalid cell: ({row}, {col})")
@@ -112,7 +111,7 @@ class Board:
                 lines.append(BAR)
         return "\n".join(lines)
 
-    def ingest(self, ary: Sequence[int]):
+    def ingest(self, ary: typing.Sequence[int]):
         """Imports an array of values."""
         if len(ary) != 81:
             raise ValueError("wrong array length")
@@ -162,7 +161,7 @@ def first_empty(current: Board) -> tuple[int, int]:
                 return (row, col)
     raise BoardFullCondition("no empty cell")
 
-def open_moves(b: Board, row: int, col: int) -> Iterable[Symbol]:
+def open_moves(b: Board, row: int, col: int) -> typing.Iterable[Symbol]:
     """Returns the possible Symbols for  at [ROW, COL]."""
     if b[row, col]:
         return frozenset()
