@@ -68,10 +68,12 @@ class Board:
         """Gets the elements in the given COLUMN."""
         return tuple(self.get(r, c) for r in range(9))
 
-    def box(self, br: int, bc: int) -> typing.Sequence[Symbol]:
-        """Gets the elements in the given box."""
-        if not (0 <= br < 3 and 0 <= bc < 3):
-            raise IndexError(f"invalid box: ({br}, {bc})")
+    def box(self, row: int, col: int) -> typing.Sequence[Symbol]:
+        """Gets the elements in the box containing (ROW, COL)."""
+        if not (0 <= row < 9 and 0 <= col < 9):
+            raise IndexError(f"invalid cell: ({row}, {col})")
+        br = row // 3
+        bc = col // 3
         return tuple(self.get(r, c)
                      for r in range(br * 3, (br + 1) * 3)
                      for c in range(bc * 3, (bc + 1) * 3))
