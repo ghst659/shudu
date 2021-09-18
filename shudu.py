@@ -138,12 +138,11 @@ def solve(current: Board) -> typing.Optional[Board]:
         return current
     possibles = open_moves(current, row, col)
     logging.info("[%s, %s] possible: %s", row, col, possibles)
-    candidate = current.clone()
     for symbol in possibles:
-        candidate[row, col] = symbol
-        solution = solve(candidate)
+        current[row, col] = symbol
+        solution = solve(current)
         if not solution:
-            candidate[row, col] = Symbol.EMPTY
+            current[row, col] = Symbol.EMPTY
         else:
             return solution
     return None
