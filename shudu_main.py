@@ -20,14 +20,12 @@ def main(argv: typing.Sequence[str]) -> int:
     puzzle = shudu.Board()
     puzzle.from_json(args.json_path)
     print(puzzle)
-    try:
-        solution = shudu.solve(puzzle)
-    except shudu.NoMovesCondition:
-        logging.warning("no solution found")
-        return 1
-    else:
+    solution = shudu.solve(puzzle)
+    if solution:
         print(solution)
         return 0
+    else:
+        return 1
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

@@ -129,29 +129,24 @@ class BoardFullCondition(Exception):
     """Indicates that something was not found."""
     pass
 
-class NoMovesCondition(Exception):
-    """Indicates that no moves are available."""
-    pass
-
-def solve(current: Board) -> Board:
+def solve(current: Board) -> typing.Optional[Board]:
     """Finds a solution to the puzzle."""
     try:
         row, col = first_empty(current)
     except BoardFullCondition:
         logging.info("board is full")
         return current
-    else:
-        possibles = open_moves(current, row, col)
-        logging.info("[%s, %s] possible: %s", row, col, possibles)
-        candidate = current.clone()
-        for symbol in possibles:
-            candidate[row, col] = symbol
-            try:
-                return solve(candidate)
-            except NoMovesCondition:
-                candidate[row, col] = Symbol.EMPTY
-                logging.info("[%d, %d] = %s failed", row, col, symbol)
-        raise NoMovesCondition(f"no moves at [{row}, {col}]")
+    possibles = open_moves(current, row, col)
+    logging.info("[%s, %s] possible: %s", row, col, possibles)
+    candidate = current.clone()
+    for symbol in possibles:
+        candidate[row, col] = symbol
+        solution = solve(candidate)
+        if not solution:
+            candidate[row, col] = Symbol.EMPTY
+        else:
+            return solution
+    return None
             
 def first_empty(current: Board) -> tuple[int, int]:
     """Returns a row, column tuple for the first empty cell."""
