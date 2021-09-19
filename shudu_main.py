@@ -21,11 +21,17 @@ def main(argv: typing.Sequence[str]) -> int:
     puzzle.from_json(args.json_path)
     print(puzzle)
     solution = shudu.solve(puzzle)
-    if solution:
-        print(solution)
-        return 0
-    else:
+    if not solution:
+        print("no solution")
         return 1
+    print(solution)
+
+    print("#" * 80)
+    blank = shudu.Board()
+    print(blank)
+    filled = shudu.solve(blank)
+    print(filled)
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
