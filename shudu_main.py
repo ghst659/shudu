@@ -20,8 +20,7 @@ def main(argv: collections.abc.Sequence[str]) -> int:
     puzzle = shudu.Board()
     puzzle.from_json(args.json_path)
     print(puzzle)
-    solution = puzzle.fill(puzzle.empty_cells())
-    if not solution:
+    if not puzzle.fill(puzzle.empty_cells()):
         print("no solution")
         return 1
     print(puzzle)

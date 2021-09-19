@@ -118,13 +118,22 @@ class Board:
                      for r in range(9) for c in range(9)
                      if not self.get(r, c))
 
+    def available_symbols(self, row: int, col: int) -> Iterable[Symbol]:
+        """Returns the possible Symbols for  at [ROW, COL]."""
+        if self.get(row, col):
+            return frozenset()
+        row_unused = frozenset(Symbol.unused(self.row(row)))
+        col_unused = frozenset(Symbol.unused(self.col(col)))
+        box_unused = frozenset(Symbol.unused(self.box(row, col)))
+        return row_unused & col_unused & box_unused
+
     def fill(self, empties: Sequence[tuple[int, int]]) -> bool:
-        """Fills the table, returning True if all empties could be filled."""
+        """Fills the table, returning True if all empties were filled."""
         if not empties:
             return True
         row, col = empties[0]
         remaining_empties = empties[1:]
-        possibles = open_moves(self, row, col)
+        possibles = self.available_symbols(row, col)
         for symbol in possibles:
             self.put(row, col, symbol)
             if self.fill(remaining_empties):
