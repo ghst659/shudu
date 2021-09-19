@@ -119,7 +119,7 @@ class Board:
                      if not self.get(r, c))
 
     def available_symbols(self, row: int, col: int) -> Iterable[Symbol]:
-        """Returns the possible Symbols for  at [ROW, COL]."""
+        """Returns the possible Symbols at [ROW, COL]."""
         if self.get(row, col):
             return frozenset()
         row_unused = frozenset(Symbol.unused(self.row(row)))
@@ -155,43 +155,3 @@ class Board:
         with open(path, "r") as json_file:
             data = json.load(json_file)
         self.ingest(data["Board"])
-
-class BoardFullCondition(Exception):
-    """Indicates that something was not found."""
-    pass
-
-def solve(current: Board) -> typing.Optional[Board]:
-    """Finds a solution to the puzzle."""
-    try:
-        row, col = first_empty(current)
-    except BoardFullCondition:
-        logging.info("board is full")
-        return current
-    possibles = open_moves(current, row, col)
-    logging.info("[%s, %s] possible: %s", row, col, possibles)
-    for symbol in possibles:
-        current[row, col] = symbol
-        solution = solve(current)
-        if not solution:
-            current[row, col] = Symbol.EMPTY
-        else:
-            return solution
-    return None
-            
-def first_empty(current: Board) -> tuple[int, int]:
-    """Returns a row, column tuple for the first empty cell."""
-    for row in range(9):
-        for col in range(9):
-            if not current.get(row, col):
-                return (row, col)
-    raise BoardFullCondition("no empty cell")
-
-def open_moves(b: Board, row: int, col: int) -> Iterable[Symbol]:
-    """Returns the possible Symbols for  at [ROW, COL]."""
-    if b[row, col]:
-        return frozenset()
-    row_unused = frozenset(Symbol.unused(b.row(row)))
-    col_unused = frozenset(Symbol.unused(b.col(col)))
-    box_unused = frozenset(Symbol.unused(b.box(row, col)))
-    return row_unused & col_unused & box_unused
-
