@@ -132,13 +132,11 @@ class Board:
             return True
         row, col = empties[0]
         remaining_empties = empties[1:]
-        possibles = self.available_symbols(row, col)
-        for symbol in possibles:
+        for symbol in self.available_symbols(row, col):
             self.put(row, col, symbol)
             if self.fill(remaining_empties):
                 return True
-            else:
-                self.put(row, col, Symbol.EMPTY)
+            self.put(row, col, Symbol.EMPTY)  # Backtrack
         return False
 
     def ingest(self, ary: Sequence[int]):
