@@ -4,6 +4,7 @@ from __future__ import annotations
 import collections
 import copy
 import enum
+import heapq
 import json
 import logging
 import typing
@@ -152,6 +153,23 @@ class Board:
     def solve(self):
         return self.fill(self.empty_cells(), level = 0)
     
+    def strict(self, empties: Sequence[tuple[int, int]]) -> bool:
+        """Try to solve using strict inference only,"""
+        if not empties:
+            return True
+        next_empties = []
+        for row, col in empties:
+            syms = tuple(self.available_symbols(row, col))
+            if len(syms) == 1:
+                self.put(row, col, syms[0])
+            else:
+                next_empties.append((row, col))
+        if len(next_empties) == len(empties):
+            logging.error("no strict solution: %s",
+                          " ".join(str(e) for e in empties))
+            return False
+        return self.strict(next_empties)
+
     def ingest(self, ary: Sequence[int]):
         """Imports an array of values."""
         if len(ary) != 81:
