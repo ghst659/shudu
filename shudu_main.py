@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
+import collections.abc
 import logging
 import sys
-import typing
 
 import shudu
 
-def main(argv: typing.Sequence[str]) -> int:
+def main(argv: collections.abc.Sequence[str]) -> int:
     """Working harness for shudu."""
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument("--board", metavar='JSON_FILE',
