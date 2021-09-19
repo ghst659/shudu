@@ -17,19 +17,27 @@ def main(argv: collections.abc.Sequence[str]) -> int:
                         dest='verbose', action="store_true",
                         help="run verbosely")
     args = parser.parse_args(args=argv[1:])
+
     puzzle = shudu.Board()
-    puzzle.from_json(args.json_path)
     print(puzzle)
-    if not puzzle.fill(puzzle.empty_cells()):
-        print("no solution")
-        return 1
+    filled = puzzle.solve()
     print(puzzle)
 
     print("#" * 80)
-    blank = shudu.Board()
-    print(blank)
-    filled = blank.fill(blank.empty_cells())
-    print(blank)
+
+    puzzle.clear()
+    puzzle.from_json(args.json_path)
+    print(puzzle)
+    if not puzzle.solve():
+        print("no solution")
+        return 1
+    print(puzzle)
+    dead_ends = 0
+    for key, count in sorted(puzzle.stats()):
+        print(key, ": ", count)
+        if key.startswith("L"):
+            dead_ends += count
+    print("dead ends:", dead_ends)
     return 0
 
 if __name__ == "__main__":

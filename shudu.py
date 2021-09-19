@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import collections
 import copy
 import enum
 import json
 import logging
 import typing
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Sequence, ItemsView
 
 class Symbol(enum.Enum):
     """Cell values."""
@@ -48,12 +49,22 @@ class Symbol(enum.Enum):
 class Board:
     """Representation of the board."""
     _cell: list[Symbol]
+    _stats: collections.defaultdict[str, int]
 
     def __init__(self):
         self._cell = [Symbol.EMPTY] * 81
+        self._stats = collections.defaultdict(int)
+
+    def clear(self):
+        for i in range(81):
+            self._cell[i] = Symbol.EMPTY
+        self._stats.clear()
 
     def clone(self):
         return copy.copy(self)
+
+    def stats(self) -> ItemsView[str, int]:
+        return self._stats.items()
 
     @staticmethod
     def _i(row: int, col: int) -> int:
@@ -126,19 +137,24 @@ class Board:
         box_unused = frozenset(Symbol.unused(self.box(row, col)))
         return row_unused & col_unused & box_unused
 
-    def fill(self, empties: Sequence[tuple[int, int]]) -> bool:
-        """Fills the table, returning True if all empties were filled."""
+    def fill(self, empties: Sequence[tuple[int, int]],
+             level:int = 0) -> bool:
+        """Fill the board and return True if all empties were filled."""
         if not empties:
             return True
         row, col = empties[0]
         remaining_empties = empties[1:]
         for symbol in self.available_symbols(row, col):
             self.put(row, col, symbol)
-            if self.fill(remaining_empties):
+            if self.fill(remaining_empties, level = level + 1):
                 return True
             self.put(row, col, Symbol.EMPTY)  # Backtrack
+        self._stats[f"L{level:02}"] += 1
         return False
 
+    def solve(self):
+        return self.fill(self.empty_cells(), level = 0)
+    
     def ingest(self, ary: Sequence[int]):
         """Imports an array of values."""
         if len(ary) != 81:
