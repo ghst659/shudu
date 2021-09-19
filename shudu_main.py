@@ -20,17 +20,17 @@ def main(argv: typing.Sequence[str]) -> int:
     puzzle = shudu.Board()
     puzzle.from_json(args.json_path)
     print(puzzle)
-    solution = shudu.solve(puzzle)
+    solution = puzzle.fill(puzzle.empty_cells())
     if not solution:
         print("no solution")
         return 1
-    print(solution)
+    print(puzzle)
 
     print("#" * 80)
     blank = shudu.Board()
     print(blank)
-    filled = shudu.solve(blank)
-    print(filled)
+    filled = blank.fill(blank.empty_cells())
+    print(blank)
     return 0
 
 if __name__ == "__main__":

@@ -44,7 +44,6 @@ class Symbol(enum.Enum):
         used_symbols = frozenset(symbols)
         return tuple(s for s in cls if s and s not in used_symbols)
 
-
 class Board:
     """Representation of the board."""
     _cell: list[Symbol]
@@ -110,6 +109,27 @@ class Board:
             if row % 3 == 2:
                 lines.append(BAR)
         return "\n".join(lines)
+
+    def empty_cells(self) -> tuple[tuple[int, int]]:
+        """Returns the cells in the board that are still empty."""
+        return tuple((r, c)
+                     for r in range(9) for c in range(9)
+                     if not self.get(r, c))
+
+    def fill(self, empties) -> bool:
+        """Fills the table, returning True if all empties could be filled."""
+        if not empties:
+            return True
+        row, col = empties[0]
+        remaining_empties = empties[1:]
+        possibles = open_moves(self, row, col)
+        for symbol in possibles:
+            self.put(row, col, symbol)
+            if self.fill(remaining_empties):
+                return True
+            else:
+                self.put(row, col, Symbol.EMPTY)
+        return False
 
     def ingest(self, ary: typing.Sequence[int]):
         """Imports an array of values."""

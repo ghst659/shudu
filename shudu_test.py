@@ -10,8 +10,8 @@ class TestShudu(unittest.TestCase):
     def core(self, data: list[int], want: str):
         board = shudu.Board()
         board.ingest(data)
-        got = shudu.solve(board)
-        self.assertEqual(str(got), want)
+        self.assertTrue(board.fill(board.empty_cells()))
+        self.assertEqual(str(board), want)
     
     def test_easy(self):
         data = [
