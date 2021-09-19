@@ -41,9 +41,8 @@ class Symbol(enum.Enum):
         return cls.EMPTY
 
     @classmethod
-    def unused(cls, symbols: Iterable[Symbol]) -> Iterable[Symbol]:
+    def unused(cls, used_symbols: Iterable[Symbol]) -> tuple[Symbol]:
         """Returns a list of enums not in the given symbol set."""
-        used_symbols = frozenset(symbols)
         return tuple(s for s in cls if s and s not in used_symbols)
 
 class Board:
@@ -66,15 +65,15 @@ class Board:
         """Returns the value at ROW, COLUMN."""
         return self._cell[self._i(row, col)]
 
-    def row(self, r: int) -> Sequence[Symbol]:
+    def row(self, r: int) -> tuple[Symbol]:
         """Returns the list of symbols in ROW."""
         return tuple(self.get(r, c) for c in range(9))
 
-    def col(self, c: int) -> Sequence[Symbol]:
+    def col(self, c: int) -> tuple[Symbol]:
         """Gets the elements in the given COLUMN."""
         return tuple(self.get(r, c) for r in range(9))
 
-    def box(self, row: int, col: int) -> Sequence[Symbol]:
+    def box(self, row: int, col: int) -> tuple[Symbol]:
         """Gets the elements in the box containing (ROW, COL)."""
         if not (0 <= row < 9 and 0 <= col < 9):
             raise IndexError(f"invalid cell: ({row}, {col})")
