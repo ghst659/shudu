@@ -55,44 +55,23 @@ class Board:
         self._cell = [Symbol.EMPTY] * 81
         self._stats = collections.defaultdict(int)
 
-    def clear(self):
-        for i in range(81):
-            self._cell[i] = Symbol.EMPTY
-        self._stats.clear()
-
-    def clone(self):
-        return copy.copy(self)
-
-    def stats(self) -> ItemsView[str, int]:
-        return self._stats.items()
-
     @staticmethod
     def _i(row: int, col: int) -> int:
         if 0 <= row < 9 and 0 <= col < 9:
             return (9 * row) + col
         raise IndexError(f"invalid cell: ({row}, {col})")
 
+    def clear(self):
+        for i in range(81):
+            self._cell[i] = Symbol.EMPTY
+        self._stats.clear()
+
+    def stats(self) -> ItemsView[str, int]:
+        return self._stats.items()
+
     def get(self, row: int, col: int) -> Symbol:
         """Returns the value at ROW, COLUMN."""
         return self._cell[self._i(row, col)]
-
-    def row(self, r: int) -> tuple[Symbol]:
-        """Returns the list of symbols in ROW."""
-        return tuple(self.get(r, c) for c in range(9))
-
-    def col(self, c: int) -> tuple[Symbol]:
-        """Gets the elements in the given COLUMN."""
-        return tuple(self.get(r, c) for r in range(9))
-
-    def box(self, row: int, col: int) -> tuple[Symbol]:
-        """Gets the elements in the box containing (ROW, COL)."""
-        if not (0 <= row < 9 and 0 <= col < 9):
-            raise IndexError(f"invalid cell: ({row}, {col})")
-        br = row // 3
-        bc = col // 3
-        return tuple(self.get(r, c)
-                     for r in range(br * 3, (br + 1) * 3)
-                     for c in range(bc * 3, (bc + 1) * 3))
 
     def __getitem__(self, key: tuple[int, int]) -> Symbol:
         row, col = key
@@ -121,6 +100,24 @@ class Board:
             if row % 3 == 2:
                 lines.append(BAR)
         return "\n".join(lines)
+
+    def row(self, r: int) -> tuple[Symbol]:
+        """Gets the elements in the given ROW."""
+        return tuple(self.get(r, c) for c in range(9))
+
+    def col(self, c: int) -> tuple[Symbol]:
+        """Gets the elements in the given COLUMN."""
+        return tuple(self.get(r, c) for r in range(9))
+
+    def box(self, row: int, col: int) -> tuple[Symbol]:
+        """Gets the elements in the box containing (ROW, COL)."""
+        if not (0 <= row < 9 and 0 <= col < 9):
+            raise IndexError(f"invalid cell: ({row}, {col})")
+        br = row // 3
+        bc = col // 3
+        return tuple(self.get(r, c)
+                     for r in range(br * 3, (br + 1) * 3)
+                     for c in range(bc * 3, (bc + 1) * 3))
 
     def empty_cells(self) -> tuple[tuple[int, int]]:
         """Returns the cells in the board that are still empty."""
