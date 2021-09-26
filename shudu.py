@@ -27,7 +27,7 @@ class Symbol(enum.Enum):
     def __bool__(self) -> bool:
         return bool(self.value)
 
-    def pp(self) -> str:
+    def text(self) -> str:
         return str(self.value) if self else " "
 
     @classmethod
@@ -58,16 +58,19 @@ class Board:
 
     @staticmethod
     def _i(row: int, col: int) -> int:
+        """Implements mapping from (ROW, COL) to the internal array."""
         if 0 <= row < 9 and 0 <= col < 9:
             return (9 * row) + col
         raise IndexError(f"invalid cell: ({row}, {col})")
 
     def clear(self):
+        """Set all board cells to empty."""
         for i in range(81):
             self._cell[i] = Symbol.EMPTY
         self._stats.clear()
 
     def stats(self) -> ItemsView[str, int]:
+        """Returns a view of the fill statistics."""
         return self._stats.items()
 
     def get(self, row: int, col: int) -> Symbol:
@@ -94,7 +97,7 @@ class Board:
             line = ["|"]
             for col in range(9):
                 x = self.get(row, col)
-                line.append(x.pp())
+                line.append(x.text())
                 if col % 3 == 2:
                     line.append("|")
             lines.append("".join(line))
@@ -135,9 +138,8 @@ class Board:
         box_unused = frozenset(Symbol.unused(self.box(row, col)))
         return row_unused & col_unused & box_unused
 
-    def fill(self, empties: Sequence[tuple[int, int]],
-             level:int = 0) -> bool:
-        """Fill the board and return True if all empties were filled."""
+    def fill(self, empties: Sequence[tuple[int, int]], level: int = 0) -> bool:
+        """Fill the EMPTIES, returning True if all were filled."""
         if not empties:
             return True
         row, col = empties[0]
@@ -171,7 +173,7 @@ class Board:
         return self.strict(next_empties)
 
     def ingest(self, ary: Sequence[int]):
-        """Imports an array of values."""
+        """Imports an ARRAY of values."""
         if len(ary) != 81:
             raise ValueError("wrong array length")
         for r in range(9):
